@@ -11,6 +11,12 @@ const db = new sqlite3.Database('./database/gruzovozoff.db');
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, 'public')));
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
+  res.header('Access-Control-Allow-Headers', 'Content-Type');
+  next();
+});
 
 // Инициализация БД
 db.serialize(() => {
@@ -103,9 +109,8 @@ app.post('/api/orders', (req, res) => {
   const { userId, date, time, weight, cargoType, dimensions, fromAddress, toAddress } = req.body;
   
   db.run(
-    `INSERT INTO orders 
-    (user_id, date, time, weight, cargo_type, dimensions, from_address, to_address) 
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+    `INSERT INTO orders (user_id, date, time, weight, cargo_type, dimensions, from_address, to_address) 
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
     [userId, date, time, weight, cargoType, dimensions, fromAddress, toAddress],
     function(err) {
       if (err) {
