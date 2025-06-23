@@ -66,7 +66,7 @@
             <div class="row g-5">
                 <div class="col-md-7 col-lg-8">
                     <h4 class="mb-3">Billing address</h4>
-                    <form class="needs-validation" novalidate="" method="post">
+                    <form class="needs-validation" id="orderForm" method="POST" novalidate>
                         <div class="row g-3">
                             <div class="col-sm-6"> <label for="firstName" class="form-label">Дата</label> <input
                                     type="date" class="form-control" id="firstName" placeholder="" value="" required="">
@@ -118,8 +118,8 @@
                             <div class="col-12"> <label for="address2" class="form-label">Адрес доставки </label> <input
                                     type="text" class="form-control" id="address2" placeholder=""> </div>
 
-                            <hr class="my-4"> <button class="w-100 btn btn-primary btn-lg" type="submit">Оформить
-                                зявку</button>
+                            <hr class="my-4"> <button type="submit" class="w-100 btn btn-primary btn-lg">Оформить
+                                заявку</button>
                     </form>
                 </div>
             </div>
@@ -139,4 +139,41 @@
     <script src="checkout.js" class="astro-vvvwv3sm"></script>
 </body>
 
-</html
+</html>
+<script>
+
+    document.getElementById('orderForm').addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        const formData = {
+            userId: 1, // Замените на реальный ID пользователя (можно получить после авторизации)
+            date: document.getElementById('firstName').value,
+            time: document.getElementById('lastName').value,
+            weight: document.getElementById('username').value,
+            cargoType: document.querySelector('.form-select').value,
+            dimensions: document.getElementById('Wwidth').value,
+            fromAddress: document.getElementById('address').value,
+            toAddress: document.getElementById('address2').value
+        };
+
+        fetch('/api/orders', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(formData)
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    alert('Ошибка: ' + data.error);
+                } else {
+                    alert('Заявка успешно создана!');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Произошла ошибка при создании заявки');
+            });
+    });
+</script>
